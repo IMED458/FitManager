@@ -4,6 +4,10 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig({
+  // Relative asset URLs, so the same build works at the custom-domain root
+  // (fitmanager.imed.com.ge) and under the GitHub Pages project path
+  // (imed458.github.io/FitManager/).
+  base: './',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
