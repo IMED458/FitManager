@@ -35,6 +35,9 @@ jobs:
         run: npm run build
         env:
           SITE_URL: https://fitmanager.imed.com.ge
+          # Repo secret: Settings → Secrets and variables → Actions
+          VITE_LEAD_ACCESS_KEY: ${{ secrets.LEAD_ACCESS_KEY }}
+          VITE_LEAD_EMAIL: gimedashvili7@gmail.com
 
       - uses: actions/configure-pages@v5
 

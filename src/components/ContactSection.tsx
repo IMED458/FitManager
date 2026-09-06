@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { Mail, Phone, MapPin, CheckCircle2, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Language, DemoFormData } from '../types';
 import { translations } from '../translations';
+import { sendLead, LEAD_EMAIL } from '../lib/sendLead';
 
 interface ContactSectionProps {
   lang: Language;
@@ -22,15 +23,25 @@ export function ContactSection({ lang }: ContactSectionProps) {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate real network submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setError(null);
+    try {
+      await sendLead(formData, 'contact');
       setIsSubmitted(true);
-    }, 700);
+    } catch (err) {
+      console.error('Contact submission failed:', err);
+      setError(
+        isKa
+          ? `განაცხადის გაგზავნა ვერ მოხერხდა. სცადეთ თავიდან ან მოგვწერეთ: ${LEAD_EMAIL}`
+          : `We could not send your request. Please try again or email us at ${LEAD_EMAIL}.`,
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -240,6 +251,15 @@ export function ContactSection({ lang }: ContactSectionProps) {
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAFAF8] border border-[#E4E5E2] text-sm text-[#111315] focus:outline-none focus:border-[#111315] focus:bg-white transition-all"
                   />
                 </div>
+
+                {error && (
+                  <p
+                    role="alert"
+                    className="text-xs leading-relaxed text-[#B3261E] bg-[#B3261E]/8 border border-[#B3261E]/20 rounded-xl px-3.5 py-2.5"
+                  >
+                    {error}
+                  </p>
+                )}
 
                 <div className="pt-2">
                   <button

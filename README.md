@@ -47,6 +47,22 @@ FAQ structured data ავტომატურად იკითხება `
 
 დომენი ერთ ადგილას იმართება: `scripts/site.config.mjs` (ან `SITE_URL` env ცვლადი).
 
+## ფორმები → ელ-ფოსტა
+
+საიტის სამივე ფორმა (Trial, დემო ლინკის მოთხოვნა, საკონტაქტო ფორმა) იგზავნება
+`src/lib/sendLead.ts`-ის გავლით. რადგან ბილდი სტატიკურია, წერილს გადასცემს
+form-to-email სერვისი (default: [Web3Forms](https://web3forms.com)).
+
+გასაღების აღება: web3forms.com-ზე შეიყვანე ინბოქსის მისამართი
+(`gimedashvili7@gmail.com`) → access key მოვა იმავე მეილზე. შემდეგ:
+
+- **GitHub**: Settings → Secrets and variables → Actions → New repository secret,
+  სახელი `LEAD_ACCESS_KEY`, მნიშვნელობა — გასაღები.
+- **ლოკალურად**: `cp .env.example .env.local` და ჩასვი იქ.
+
+გასაღების გარეშე ფორმა არ ამბობს ტყუილს „გაიგზავნა" — აჩვენებს შეცდომას და
+პირდაპირ ელ-ფოსტის მისამართს.
+
 ## დეპლოი
 
 `main`-ზე push ავტომატურად უშვებს `.github/workflows/deploy.yml`-ს:

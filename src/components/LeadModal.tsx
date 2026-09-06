@@ -2,6 +2,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import { X, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Language, DemoFormData } from '../types';
 import { translations } from '../translations';
+import { sendLead, LEAD_EMAIL } from '../lib/sendLead';
 
 interface LeadModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export function LeadModal({ isOpen, onClose, lang, initialPlan, type }: LeadModa
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialPlan) {
@@ -50,13 +52,23 @@ export function LeadModal({ isOpen, onClose, lang, initialPlan, type }: LeadModa
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setError(null);
+    try {
+      await sendLead(formData, type);
       setIsSubmitted(true);
-    }, 600);
+    } catch (err) {
+      console.error('Lead submission failed:', err);
+      setError(
+        isKa
+          ? `განაცხადის გაგზავნა ვერ მოხერხდა. სცადეთ თავიდან ან მოგვწერეთ: ${LEAD_EMAIL}`
+          : `We could not send your request. Please try again or email us at ${LEAD_EMAIL}.`,
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -188,6 +200,15 @@ export function LeadModal({ isOpen, onClose, lang, initialPlan, type }: LeadModa
                   ))}
                 </select>
               </div>
+
+              {error && (
+                <p
+                  role="alert"
+                  className="text-[11px] leading-relaxed text-[#B3261E] bg-[#B3261E]/8 border border-[#B3261E]/20 rounded-xl px-3 py-2"
+                >
+                  {error}
+                </p>
+              )}
 
               <div className="pt-2">
                 <button
