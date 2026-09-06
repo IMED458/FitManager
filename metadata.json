@@ -1,0 +1,6 @@
+{
+  "name": "Fit Manager",
+  "description": "ფიტნეს დარბაზების, სპორტული კლუბებისა და სავარჯიშო სივრცეების მართვის თანამედროვე SaaS პლატფორმა.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
