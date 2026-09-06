@@ -229,7 +229,7 @@ export default function App() {
         if (p.id === sale.productId) {
           return {
             ...p,
-            stockQuantity: Math.max(0, p.stockQuantity - sale.quantity),
+            stock: Math.max(0, p.stock - sale.quantity),
           };
         }
         return p;
@@ -243,7 +243,7 @@ export default function App() {
         if (p.id === productId) {
           return {
             ...p,
-            stockQuantity: p.stockQuantity + quantityToAdd,
+            stock: p.stock + quantityToAdd,
           };
         }
         return p;

@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Crawl helpers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+Sitemap: https://fitmanager.imed.com.ge/sitemap.xml
