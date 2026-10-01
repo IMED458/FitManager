@@ -4,7 +4,6 @@ import {
   X,
   Globe,
   Mail,
-  LogIn,
   ArrowRight,
   ShieldCheck,
 } from 'lucide-react';
@@ -16,7 +15,6 @@ interface NavbarProps {
   onToggleLang: () => void;
   onOpenTrial: () => void;
   onOpenDemo: () => void;
-  onEnterDemo: () => void;
   onSwitchToSoftware?: () => void;
 }
 
@@ -25,7 +23,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleLang,
   onOpenTrial,
   onOpenDemo,
-  onEnterDemo,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isKa = lang === 'ka';
@@ -157,16 +154,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>{isKa ? 'დემო ლინკი' : 'Demo Link'}</span>
             </button>
 
-            {/* Enter the live demo (no sign-in) */}
-            <button
-              type="button"
-              onClick={onEnterDemo}
-              className="px-3 py-2 rounded-xl border border-[#E4E5E2] hover:bg-slate-50 text-xs font-bold text-[#111315] transition-all cursor-pointer flex items-center gap-1.5"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>{t.login}</span>
-            </button>
-
             {/* Trial Modal */}
             <button
               type="button"
@@ -263,18 +250,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onEnterDemo();
-                }}
-                className="flex-1 py-2 rounded-xl border border-slate-300 text-xs font-bold"
-              >
-                {t.login}
-              </button>
-              <button
-                type="button"
                 onClick={onToggleLang}
-                className="px-3 py-2 rounded-xl border border-slate-300 text-xs font-bold"
+                className="flex-1 py-2 rounded-xl border border-slate-300 text-xs font-bold"
               >
                 {isKa ? 'EN' : 'KA'}
               </button>

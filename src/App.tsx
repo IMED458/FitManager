@@ -85,6 +85,13 @@ export default function App() {
     ) + 1
   );
 
+  // The demo has no entry point in the UI any more; it stays reachable at /#demo
+  useEffect(() => {
+    if (window.location.hash === '#demo') {
+      setAppMode('software');
+    }
+  }, []);
+
   // Sync dark mode class on document when inside software
   useEffect(() => {
     if (appMode === 'software' && darkMode) {
@@ -448,7 +455,6 @@ export default function App() {
         onToggleLang={() => setLang(lang === 'ka' ? 'en' : 'ka')}
         onOpenTrial={() => handleOpenTrial()}
         onOpenDemo={handleOpenDemo}
-        onEnterDemo={handleSwitchToSoftware}
         onSwitchToSoftware={handleSwitchToSoftware}
       />
 
