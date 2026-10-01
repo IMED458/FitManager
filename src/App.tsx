@@ -30,7 +30,6 @@ import { FaqSection } from './components/FaqSection';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { LeadModal } from './components/LeadModal';
-import { LoginModal } from './components/LoginModal';
 
 // Live Gym Management Software Components
 import { Header } from './components/Header';
@@ -47,11 +46,7 @@ import { ExcelView } from './components/ExcelView';
 import { SettingsView } from './components/SettingsView';
 import { MemberModal } from './components/MemberModal';
 
-import {
-  LogIn,
-  Lock,
-  ArrowLeft,
-} from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export default function App() {
   // Application Mode: 'website' for SaaS marketing landing page, 'software' for the operational Fit Manager system
@@ -64,13 +59,10 @@ export default function App() {
   const [leadModalOpen, setLeadModalOpen] = useState(false);
   const [leadModalType, setLeadModalType] = useState<'trial' | 'demo'>('trial');
   const [selectedPlan, setSelectedPlan] = useState<string | undefined>(undefined);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   // Software Operational State
   const [activeTab, setActiveTab] = useState<NavigationTab>('dashboard');
   const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [isLocked, setIsLocked] = useState<boolean>(false);
-  const [pinInput, setPinInput] = useState<string>('');
 
   // Core Gym Data State (Shared across the app)
   const [members, setMembers] = useState<Member[]>(INITIAL_MEMBERS);
@@ -114,9 +106,15 @@ export default function App() {
     setLeadModalOpen(true);
   };
 
-  // Switch to Software Mode
+  // Switch to Software Mode — the demo is open, there is no sign-in
   const handleSwitchToSoftware = () => {
     setAppMode('software');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Leave the demo and go back to the marketing site
+  const handleSwitchToWebsite = () => {
+    setAppMode('website');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -263,74 +261,7 @@ export default function App() {
   };
 
   // ==========================================
-  // RENDER 1: LOCK SCREEN (INSIDE SOFTWARE)
-  // ==========================================
-  if (appMode === 'software' && isLocked) {
-    return (
-      <div className="min-h-screen bg-[#111315] text-white flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-sm bg-[#1A2332] rounded-3xl p-8 border border-slate-700/80 shadow-2xl text-center space-y-6">
-          <div className="w-16 h-16 bg-[#2563EB] rounded-2xl mx-auto flex items-center justify-center text-white shadow-lg">
-            <Lock className="w-8 h-8" />
-          </div>
-
-          <div>
-            <h2 className="text-xl font-bold text-white">ეკრანი დაბლოკილია</h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Fit Manager - შეიყვანეთ PIN (ნაგულისხმევი: 1234)
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <input
-              type="password"
-              maxLength={4}
-              value={pinInput}
-              onChange={(e) => {
-                const val = e.target.value;
-                setPinInput(val);
-                if (val === '1234') {
-                  setIsLocked(false);
-                  setPinInput('');
-                }
-              }}
-              placeholder="••••"
-              className="w-full text-center tracking-[1em] text-2xl py-3 rounded-xl bg-[#111315] border border-slate-700 text-white font-mono focus:outline-none focus:border-blue-500"
-              autoFocus
-            />
-
-            <button
-              type="button"
-              onClick={() => {
-                if (pinInput === '1234' || pinInput === '') {
-                  setIsLocked(false);
-                  setPinInput('');
-                } else {
-                  alert('არასწორი PIN. გამოიყენეთ 1234');
-                }
-              }}
-              className="w-full py-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-sm transition-all"
-            >
-              განბლოკვა
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsLocked(false);
-                setAppMode('website');
-              }}
-              className="w-full py-2 text-xs text-slate-400 hover:text-white transition-colors"
-            >
-              ← ვებგვერდზე დაბრუნება
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ==========================================
-  // RENDER 2: FULL OPERATIONAL SOFTWARE APP
+  // FULL OPERATIONAL SOFTWARE DEMO (open, no sign-in)
   // ==========================================
   if (appMode === 'software') {
     return (
@@ -344,7 +275,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <button
               type="button"
-              onClick={() => setAppMode('website')}
+              onClick={handleSwitchToWebsite}
               className="flex items-center gap-2 font-bold text-blue-400 hover:text-blue-300 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -370,7 +301,7 @@ export default function App() {
             <Header
               darkMode={darkMode}
               onToggleDarkMode={() => setDarkMode(!darkMode)}
-              onLogout={() => setIsLocked(true)}
+              onLogout={handleSwitchToWebsite}
               operatorName="მთავარი ოპერატორი"
             />
 
@@ -517,7 +448,7 @@ export default function App() {
         onToggleLang={() => setLang(lang === 'ka' ? 'en' : 'ka')}
         onOpenTrial={() => handleOpenTrial()}
         onOpenDemo={handleOpenDemo}
-        onOpenLogin={() => setLoginModalOpen(true)}
+        onEnterDemo={handleSwitchToSoftware}
         onSwitchToSoftware={handleSwitchToSoftware}
       />
 
@@ -579,13 +510,6 @@ export default function App() {
         lang={lang}
         initialPlan={selectedPlan}
         type={leadModalType}
-      />
-
-      <LoginModal
-        isOpen={loginModalOpen}
-        onClose={() => setLoginModalOpen(false)}
-        lang={lang}
-        onSuccessLogin={handleSwitchToSoftware}
       />
     </div>
   );

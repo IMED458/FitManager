@@ -16,7 +16,7 @@ interface NavbarProps {
   onToggleLang: () => void;
   onOpenTrial: () => void;
   onOpenDemo: () => void;
-  onOpenLogin: () => void;
+  onEnterDemo: () => void;
   onSwitchToSoftware?: () => void;
 }
 
@@ -25,7 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleLang,
   onOpenTrial,
   onOpenDemo,
-  onOpenLogin,
+  onEnterDemo,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isKa = lang === 'ka';
@@ -157,10 +157,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>{isKa ? 'დემო ლინკი' : 'Demo Link'}</span>
             </button>
 
-            {/* Login Modal */}
+            {/* Enter the live demo (no sign-in) */}
             <button
               type="button"
-              onClick={onOpenLogin}
+              onClick={onEnterDemo}
               className="px-3 py-2 rounded-xl border border-[#E4E5E2] hover:bg-slate-50 text-xs font-bold text-[#111315] transition-all cursor-pointer flex items-center gap-1.5"
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -265,7 +265,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  onOpenLogin();
+                  onEnterDemo();
                 }}
                 className="flex-1 py-2 rounded-xl border border-slate-300 text-xs font-bold"
               >
