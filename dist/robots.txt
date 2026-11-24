@@ -11,4 +11,4 @@ Allow: /
 User-agent: YandexBot
 Allow: /
 
-Sitemap: https://fitmanager.imed.com.ge/sitemap.xml
+Sitemap: https://fitmanager.ge/sitemap.xml

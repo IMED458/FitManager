@@ -29,7 +29,8 @@
     if(art)art.insertAdjacentHTML('beforeend','<span class="v5-hero-orbit" aria-hidden="true"></span>');
   }
   function initializeMotion(main) {
-    if(reduced){main.querySelectorAll('.reveal').forEach(el=>el.classList.add('shown'));return;}
+    /* Phones keep content visible: no scroll-triggered hiding. */
+    if(reduced||matchMedia('(max-width:760px)').matches){main.querySelectorAll('.reveal').forEach(el=>el.classList.add('shown'));return;}
     if(window.gsap&&window.ScrollTrigger){
       const {gsap,ScrollTrigger}=window;
       gsap.registerPlugin(ScrollTrigger);

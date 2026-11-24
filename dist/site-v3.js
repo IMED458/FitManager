@@ -3,7 +3,7 @@
   const root = document.getElementById('app');
   // Web3Forms access key (public by design; bound to the info@fitmanager.ge inbox).
   // While empty, the form falls back to opening the visitor's email app.
-  const LEAD_ACCESS_KEY = '';
+  const LEAD_ACCESS_KEY = 'f862cf38-957d-41b1-9f88-f6f260a7957c';
   const LEAD_ENDPOINT = 'https://api.web3forms.com/submit';
   const links = [
     ['home', 'მთავარი'], ['features', 'ფუნქციები'], ['how', 'როგორ მუშაობს'], ['portals', 'კაბინეტები'],
@@ -132,7 +132,7 @@
       <div class="frame">
         <div class="journey-heading">${dotLabel('ყოველდღიური სამუშაო')}<h2>როგორ მუშაობს<br>Fit Manager</h2><p>წევრის რეგისტრაციიდან შესვლის კონტროლამდე და დღის ანგარიშამდე — ყველაფერი თანმიმდევრულად.</p></div>
         <div class="journey-layout"><div class="journey-visual"><div class="journey-stage"><div class="stage-cap"><span>FIT MANAGER / WORKFLOW</span><span class="stage-count">01 / 04</span></div>
-          ${journeySteps.map((_,i)=>`<div class="scene-panel ${i===0?'active':''}" data-scene="${i}">${scenePanel(i)}</div>`).join('')}
+          <div class="scene-track">${journeySteps.map((_,i)=>`<div class="scene-panel ${i===0?'active':''}" data-scene="${i}">${scenePanel(i)}</div>`).join('')}</div>
           <div class="stage-bottom"><span>წევრები · შესვლები · ანგარიშები</span><div class="stage-dashes"><i class="active"></i><i></i><i></i><i></i></div></div>
         </div></div>
         <div class="journey-steps">${journeySteps.map(([t,d],i)=>`<article class="journey-step ${i===0?'active':''}" data-journey-step="${i}"><div class="journey-number">0${i+1}</div><div><h3>${t}</h3><p>${d}</p></div></article>`).join('')}</div></div>
@@ -298,12 +298,39 @@
     const count=document.querySelector('.stage-count');if(count)count.textContent=`${String(index+1).padStart(2,'0')} / 04`;
     document.querySelectorAll('.stage-dashes i').forEach((el,i)=>el.classList.toggle('active',i===index));
   }
+  const compact=window.matchMedia('(max-width:760px)');
+  // Phones: the four scenes are a swipeable row instead of a scroll-driven stage.
+  function showScene(index,reveal) {
+    const track=document.querySelector('.scene-track');if(!track)return;
+    const still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    track.scrollTo({left:index*track.clientWidth,behavior:still?'instant':'smooth'});
+    activateScene(index);
+    if(reveal){const visual=document.querySelector('.journey-visual');const top=visual.getBoundingClientRect().top+window.scrollY-84;window.scrollTo({top,behavior:still?'instant':'smooth'});}
+  }
+  function mountSceneTrack() {
+    const track=document.querySelector('.scene-track');if(!track)return;
+    let timer;
+    track.addEventListener('scroll',()=>{if(!compact.matches)return;clearTimeout(timer);timer=setTimeout(()=>activateScene(Math.round(track.scrollLeft/Math.max(1,track.clientWidth))),70);},{passive:true});
+  }
+  function setMenu(open) {
+    state.menu=open;
+    const button=root.querySelector('[data-menu]');
+    root.querySelector('.mobile-nav')?.classList.toggle('is-open',open);
+    if(!button)return;
+    const label=open?'მენიუს დახურვა':'მენიუს გახსნა';
+    button.setAttribute('aria-expanded',String(open));
+    button.setAttribute('aria-label',state.lang==='en'?(window.FitManagerI18n?.en[label]||label):label);
+    button.innerHTML=symbol(open?'close':'menu');
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&state.menu)setMenu(false);});
+  document.addEventListener('click',e=>{if(state.menu&&e.target.isConnected&&!e.target.closest('.topbar'))setMenu(false);});
   function mountPage() {
+    mountSceneTrack();
     if(pageObserver)pageObserver.disconnect();if(journeyObserver)journeyObserver.disconnect();
     if('IntersectionObserver' in window) {
       pageObserver=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('shown');pageObserver.unobserve(e.target);}}),{threshold:.09});
       document.querySelectorAll('.reveal').forEach(el=>pageObserver.observe(el));
-      journeyObserver=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting)activateScene(Number(e.target.dataset.journeyStep));},{rootMargin:'-34% 0px -34% 0px',threshold:0});
+      journeyObserver=new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting&&!compact.matches)activateScene(Number(e.target.dataset.journeyStep));},{rootMargin:'-34% 0px -34% 0px',threshold:0});
       document.querySelectorAll('[data-journey-step]').forEach(el=>journeyObserver.observe(el));
     } else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('shown'));
   }
@@ -332,7 +359,8 @@
       history.replaceState({page:state.page,lang:next},'',path(state.page));
       render();return;
     }
-    const menu=e.target.closest('[data-menu]');if(menu){state.menu=!state.menu;render();return;}
+    const menu=e.target.closest('[data-menu]');if(menu){setMenu(!state.menu);return;}
+    const step=e.target.closest('[data-journey-step]');if(step&&compact.matches){showScene(Number(step.dataset.journeyStep),true);return;}
     const p=e.target.closest('[data-portal]');if(p){state.portal=p.dataset.portal;const y=window.scrollY;render();window.scrollTo(0,y);return;}
     const faq=e.target.closest('[data-faq]');if(faq){const row=faq.closest('.faq-item');const open=row.classList.toggle('open');faq.setAttribute('aria-expanded',String(open));return;}
   });

@@ -1,6 +1,6 @@
 # Fit Manager — საიტი
 
-🌐 **https://fitmanager.imed.com.ge**
+🌐 **https://fitmanager.ge**
 
 სტატიკური საიტი: build პროცესი და npm პაკეტები არ სჭირდება.
 
@@ -9,7 +9,7 @@
 | `dist/index.html` | საწყისი ფაილი |
 | `dist/site-v3.js` | გვერდები, ტექსტები, მენიუ, დემოს ფორმა |
 | `dist/site-i18n.js` | ინგლისური ვერსია |
-| `dist/site-v3.css`, `site-v5.css`, `site-v6.css` | დიზაინი |
+| `dist/site-v3.css`, `site-v5.css`, `site-v6.css`, `site-v7.css` (მობილური) | დიზაინი |
 | `dist/site-v5.js` | 3D ეფექტები და ანიმაციები |
 | `dist/assets/`, `dist/vendor/` | სურათები; GSAP, ScrollTrigger, Lenis |
 | `dist/CNAME`, `robots.txt`, `sitemap.xml`, `site.webmanifest` | დომენი, SEO, PWA |
@@ -27,4 +27,4 @@ python3 -m http.server 8080 -d dist
 ## დემოს ფორმა → ელფოსტა
 
 ფორმა [Web3Forms](https://web3forms.com)-ით იგზავნება `info@fitmanager.ge`-ზე. გასაღები იწერება
-`dist/site-v3.js`-ში, ცვლადში `LEAD_ACCESS_KEY`. სანამ ცარიელია, იხსნება მომხმარებლის ელფოსტის აპი.
+`dist/site-v3.js`-ში, ცვლადში `LEAD_ACCESS_KEY`. თუ ცარიელია, იხსნება მომხმარებლის ელფოსტის აპი.
