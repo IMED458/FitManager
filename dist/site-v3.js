@@ -1,6 +1,10 @@
 /* Fit Manager — marketing pages, navigation and demo request. */
 (() => {
   const root = document.getElementById('app');
+  // Web3Forms access key (public by design; bound to the info@fitmanager.ge inbox).
+  // While empty, the form falls back to opening the visitor's email app.
+  const LEAD_ACCESS_KEY = '';
+  const LEAD_ENDPOINT = 'https://api.web3forms.com/submit';
   const links = [
     ['home', 'მთავარი'], ['features', 'ფუნქციები'], ['how', 'როგორ მუშაობს'], ['portals', 'კაბინეტები'],
     ['pricing', 'ფასები'], ['faq', 'კითხვები']
@@ -275,7 +279,7 @@
   function faq() {return `${pageIntro('ხშირად დასმული კითხვები','რაც უნდა იცოდეთ<br>პროგრამის შერჩევამდე','პასუხები ძირითად კითხვებზე — ფუნქციების, წვდომის, პაკეტებისა და საცდელი პერიოდის შესახებ.','05 / კითხვები')}
     <section class="faq-section"><div class="frame faq-layout"><div class="faq-note">${dotLabel('კიდევ გაქვს კითხვა?')}<h2>მოგვწერე და დაგეხმარებით</h2><p>გაინტერესებს კონკრეტული ფუნქცია ან პაკეტი? მოგვწერე შენს საჭიროებებზე და ყველაფერს აგიხსნით.</p>${button('contact','მოითხოვე დემო','dark')}</div><div class="faq-list">${faqs.map(([q,a],i)=>`<article class="faq-item ${i===0?'open':''}"><button type="button" class="faq-q" data-faq aria-expanded="${i===0}"><span>${String(i+1).padStart(2,'0')}</span><b>${q}</b>${symbol('chevron')}</button><div class="faq-a"><p>${a}</p></div></article>`).join('')}</div></div></section>`; }
   function contact() { return `${pageIntro('მოითხოვე დემო','ნახე Fit Manager<br>შენი ბიზნესისთვის','მოგვწერე რას მართავ და რომელი ფუნქციები გაინტერესებს. დემოს ბმულს შენს ელფოსტაზე გამოგიგზავნით.','06 / დემო')}
-    <section class="request-section"><div class="frame request-layout"><div class="request-info"><div>${dotLabel('დაგვიკავშირდი')}<h2>მოგვწერე შენი სივრცის შესახებ</h2><p class="request-intro">დემო დაგეხმარება ნახო, როგორ მართავ წევრებს, შესვლებს, გადახდებსა და ტრენერების სამუშაოს ერთ სისტემაში.</p></div><div class="request-points"><div><span>01</span><b>შეავსე მოკლე ფორმა</b></div><div><span>02</span><b>მოთხოვნა გამოგვიგზავნე ელფოსტით</b></div><div><span>03</span><b>დემოს ბმულს გამოგიგზავნით</b></div></div><div class="request-email"><span>ელფოსტა</span><a href="mailto:info@fitmanager.ge?subject=Fit%20Manager%20%E2%80%94%20%E1%83%93%E1%83%94%E1%83%9B%E1%83%9D%E1%83%A1%20%E1%83%9B%E1%83%9D%E1%83%97%E1%83%AE%E1%83%9D%E1%83%95%E1%83%9C%E1%83%90">info@fitmanager.ge</a></div></div>
+    <section class="request-section"><div class="frame request-layout"><div class="request-info"><div>${dotLabel('დაგვიკავშირდი')}<h2>მოგვწერე შენი სივრცის შესახებ</h2><p class="request-intro">დემო დაგეხმარება ნახო, როგორ მართავ წევრებს, შესვლებს, გადახდებსა და ტრენერების სამუშაოს ერთ სისტემაში.</p></div><div class="request-points"><div><span>01</span><b>შეავსე მოკლე ფორმა</b></div><div><span>02</span><b>${LEAD_ACCESS_KEY?'გამოგვიგზავნე მოთხოვნა':'მოთხოვნა გამოგვიგზავნე ელფოსტით'}</b></div><div><span>03</span><b>დემოს ბმულს გამოგიგზავნით</b></div></div><div class="request-email"><span>ელფოსტა</span><a href="mailto:info@fitmanager.ge?subject=Fit%20Manager%20%E2%80%94%20%E1%83%93%E1%83%94%E1%83%9B%E1%83%9D%E1%83%A1%20%E1%83%9B%E1%83%9D%E1%83%97%E1%83%AE%E1%83%9D%E1%83%95%E1%83%9C%E1%83%90">info@fitmanager.ge</a></div></div>
       <form class="request-form demo-request-form" data-demo-form><div class="form-heading"><span>დემოს მოთხოვნა</span><span>FIT MANAGER</span></div><div class="form-fields">
         <label for="demo-name">სახელი და გვარი<input id="demo-name" name="name" type="text" autocomplete="name" placeholder="შენი სახელი" required maxlength="100"></label>
         <label for="demo-email">ელფოსტა<input id="demo-email" name="email" type="email" autocomplete="email" placeholder="name@example.com" required maxlength="150"></label>
@@ -283,7 +287,7 @@
         <label for="demo-business">სივრცის სახელი<input id="demo-business" name="business" type="text" placeholder="კლუბი ან სტუდია" required maxlength="140"></label>
         <label for="demo-type">სივრცის ტიპი<select id="demo-type" name="type" required><option value="" disabled selected>აირჩიე</option><option>სპორტდარბაზი / ფიტნესკლუბი</option><option>Pilates / Reformer სტუდია</option><option>იოგას სტუდია</option><option>კრივისა და საბრძოლო ხელოვნების კლუბი</option><option>ცეკვის სტუდია</option><option>საცურაო აუზი ან სკოლა</option><option>სპორტული აკადემია</option><option>სხვა</option></select></label>
         <label for="demo-message" class="form-full">რა გაინტერესებს? <span class="field-optional">(არასავალდებულო)</span><textarea id="demo-message" name="message" rows="4" maxlength="2000" placeholder="მოგვწერე, რაში გჭირდება Fit Manager"></textarea></label>
-      </div><button type="submit" class="action form-submit"><span>მოითხოვე დემო</span></button><p class="form-privacy">ღილაკზე დაჭერის შემდეგ გაიხსნება შენი ელფოსტის აპი მზა წერილით. მოთხოვნის გასაგზავნად დააჭირე „გაგზავნას“.</p><p class="form-send-note" role="status" aria-live="polite"></p></form>
+      </div><input type="checkbox" name="botcheck" hidden tabindex="-1" autocomplete="off" aria-hidden="true"><button type="submit" class="action form-submit"><span>მოითხოვე დემო</span></button><p class="form-privacy">${LEAD_ACCESS_KEY?'მონაცემებს დემოს მოთხოვნაზე პასუხისთვის გამოვიყენებთ. ფორმა Web3Forms-ის მეშვეობით იგზავნება.':'ღილაკზე დაჭერის შემდეგ გაიხსნება შენი ელფოსტის აპი მზა წერილით. მოთხოვნის გასაგზავნად დააჭირე „გაგზავნას“.'}</p><p class="form-send-note" role="status" aria-live="polite"></p></form>
     </div></section>`; }
   const pages={home,features,how,portals,pricing,faq,contact};
   const titles={home:'მთავარი',features:'ფუნქციები',how:'როგორ მუშაობს',portals:'კაბინეტები',pricing:'ფასები',faq:'კითხვები',contact:'მოითხოვე დემო'};
@@ -332,6 +336,31 @@
     const p=e.target.closest('[data-portal]');if(p){state.portal=p.dataset.portal;const y=window.scrollY;render();window.scrollTo(0,y);return;}
     const faq=e.target.closest('[data-faq]');if(faq){const row=faq.closest('.faq-item');const open=row.classList.toggle('open');faq.setAttribute('aria-expanded',String(open));return;}
   });
+  async function sendLead(form,status,subject,body,english) {
+    if(form.dataset.sending)return;
+    const fields=new FormData(form);
+    const submit=form.querySelector('.form-submit');
+    const say=text=>{if(status)status.textContent=text;};
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),20000);
+    form.dataset.sending='1';submit.disabled=true;
+    say(english?'Sending…':'იგზავნება…');
+    try {
+      const response=await fetch(LEAD_ENDPOINT,{
+        method:'POST',signal:controller.signal,
+        headers:{'Content-Type':'application/json',Accept:'application/json'},
+        body:JSON.stringify({access_key:LEAD_ACCESS_KEY,subject,from_name:'Fit Manager',replyto:String(fields.get('email')||'').trim(),message:body,botcheck:fields.has('botcheck')})
+      });
+      const result=await response.json().catch(()=>null);
+      if(!response.ok||!result?.success)throw new Error(`Lead delivery failed: ${response.status}`);
+      form.reset();
+      say(english?'Thank you! Your request has been sent. We’ll email you the demo link.':'გმადლობთ! მოთხოვნა გაგზავნილია. დემოს ბმულს ელფოსტით გამოგიგზავნით.');
+    } catch {
+      say(english?'Your request could not be sent. Please try again or email us at info@fitmanager.ge.':'მოთხოვნა ვერ გაიგზავნა. სცადე თავიდან ან მოგვწერე info@fitmanager.ge-ზე.');
+    } finally {
+      clearTimeout(timer);delete form.dataset.sending;submit.disabled=false;
+    }
+  }
   root.addEventListener('submit',e=>{
     const form=e.target.closest('[data-demo-form]');
     if(!form)return;
@@ -367,6 +396,7 @@
       String(fields.get('message')||'').trim() || '—'
     ].join('\n');
     const status=form.querySelector('.form-send-note');
+    if(LEAD_ACCESS_KEY){sendLead(form,status,subject,body,english);return;}
     if(status)status.textContent=english ? 'Press Send in your email app. If it doesn’t open, email us directly at info@fitmanager.ge.' : 'ელფოსტის აპში დააჭირე „გაგზავნას“. თუ აპი არ გაიხსნა, მოგვწერე პირდაპირ info@fitmanager.ge-ზე.';
     window.location.href=`mailto:info@fitmanager.ge?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });

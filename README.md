@@ -23,3 +23,8 @@ python3 -m http.server 8080 -d dist
 ## დეპლოი
 
 `main`-ზე push ავტომატურად აქვეყნებს `dist/`-ს GitHub Pages-ზე.
+
+## დემოს ფორმა → ელფოსტა
+
+ფორმა [Web3Forms](https://web3forms.com)-ით იგზავნება `info@fitmanager.ge`-ზე. გასაღები იწერება
+`dist/site-v3.js`-ში, ცვლადში `LEAD_ACCESS_KEY`. სანამ ცარიელია, იხსნება მომხმარებლის ელფოსტის აპი.
