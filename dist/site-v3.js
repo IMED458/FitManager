@@ -374,11 +374,12 @@
     form.dataset.sending='1';submit.disabled=true;
     say(english?'Sending…':'იგზავნება…');
     try {
-      const response=await fetch(LEAD_ENDPOINT,{
-        method:'POST',signal:controller.signal,
-        headers:{'Content-Type':'application/json',Accept:'application/json'},
-        body:JSON.stringify({access_key:LEAD_ACCESS_KEY,subject,from_name:'Fit Manager',replyto:String(fields.get('email')||'').trim(),message:body,botcheck:fields.has('botcheck')})
-      });
+      // Form-encoded body: a simple CORS request, so no preflight can block it.
+      const payload=new FormData();
+      const values={access_key:LEAD_ACCESS_KEY,subject,from_name:'Fit Manager',replyto:String(fields.get('email')||'').trim(),message:body};
+      Object.entries(values).forEach(([key,value])=>payload.append(key,value));
+      if(fields.has('botcheck'))payload.append('botcheck','on');
+      const response=await fetch(LEAD_ENDPOINT,{method:'POST',signal:controller.signal,headers:{Accept:'application/json'},body:payload});
       const result=await response.json().catch(()=>null);
       if(!response.ok||!result?.success)throw new Error(`Lead delivery failed: ${response.status}`);
       form.reset();
