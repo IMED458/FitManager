@@ -393,7 +393,6 @@
     'დემო დაგეხმარება ნახო, როგორ მართავ წევრებს, შესვლებს, გადახდებსა და ტრენერების სამუშაოს ერთ სისტემაში.': 'See how Fit Manager brings member records, check-ins, payments and trainer workflows together.',
     'შეავსე მოკლე ფორმა': 'Complete the short form',
     'გამოგვიგზავნე მოთხოვნა': 'Send us your request',
-    'მონაცემებს დემოს მოთხოვნაზე პასუხისთვის გამოვიყენებთ. ფორმა Web3Forms-ის მეშვეობით იგზავნება.': 'We use your details to respond to your demo request. The form is delivered through Web3Forms.',
     'მოთხოვნა გამოგვიგზავნე ელფოსტით': 'Send your request by email',
     'დემოს ბმულს გამოგიგზავნით': 'We’ll email you the demo link',
     'ელფოსტა': 'Email',
