@@ -385,6 +385,19 @@
     'როგორ მოვითხოვო დემო?': 'How do I request a demo?',
     'შეავსე მოთხოვნის ფორმა ან მოგვწერე info@fitmanager.ge-ზე. დემოს ბმულს ელფოსტით გამოგიგზავნით.': 'Complete the request form or email info@fitmanager.ge. We’ll send you a demo link by email.',
 
+    // Search-focused headings
+    'დარბაზის მართვა ერთ სისტემაში': 'Run your gym in one system',
+    'სპორტდარბაზის': 'Gym Management',
+    'მართვის პროგრამა': 'Software',
+    'დარბაზის მართვის პროგრამა, რომელიც წევრებს, აბონემენტებს, შესვლებს, ტრენერებსა და ფინანსებს ერთ ადგილას აერთიანებს.': 'Gym management software that brings members, memberships, check-ins, trainers and finances together.',
+    'ფიტნეს კლუბის': 'Fitness Club',
+    'მართვის სისტემა': 'Management System',
+    'ფიტნეს CRM წევრებისთვის, ვიზიტების, გადახდებისა და მწვრთნელობის ინსტრუმენტები ერთად.': 'A fitness CRM with tools for members, visits, payments and coaching.',
+    'წევრების ბაზა და დარბაზის CRM': 'Member database and gym CRM',
+    'გადაწყვეტილებები': 'Solutions',
+    'ხშირი კითხვები': 'FAQ',
+    'სხვა გადაწყვეტილებები': 'Other solutions',
+
     // Contact form
     'ნახე Fit Manager': 'Explore Fit Manager',
     'შენი ბიზნესისთვის': 'for your business',

@@ -35,9 +35,9 @@ function jsonld(page, lang) {
   const info = seo.head(page, lang), graph = [org, site];
   graph.push({ '@type': 'WebPage', '@id': `${info.canonical}#webpage`, url: info.canonical, name: info.title, description: info.description, inLanguage: lang, isPartOf: { '@id': site['@id'] }, about: { '@id': `${seo.origin}/#software` } });
   graph.push(app(lang));
-  if (page !== 'home') { const label = seo.landings[page]?.nav || names.ka[page]; const crumb = s => lang === 'en' ? dict[s] || s : s;
+  if (page !== 'home') { const label = seo.view(page, lang)?.nav || names.ka[page]; const crumb = s => lang === 'en' ? dict[s] || s : s;
     graph.push({ '@type': 'BreadcrumbList', itemListElement: [['home', names.ka.home], [page, label]].map(([p, n], i) => ({ '@type': 'ListItem', position: i + 1, name: crumb(n), item: seo.origin + seo.pathFor(p, lang) })) }); }
-  const qa = seo.landings[page]?.faq || (page === 'faq' ? faqs : null);
+  const qa = seo.view(page, lang)?.faq || (page === 'faq' ? faqs : null);
   if (qa) graph.push({ '@type': 'FAQPage', inLanguage: lang, mainEntity: qa.map(([q, a]) => { const t = s => lang === 'en' ? tr(s) : s; return { '@type': 'Question', name: t(q), acceptedAnswer: { '@type': 'Answer', text: t(a) } }; }) });
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
 }
@@ -65,9 +65,9 @@ function pageHtml(page, lang) {
 }
 const list = [];
 const emit = (page, lang) => { const p = seo.pathFor(page, lang); mkdirSync(path.join(out, p), { recursive: true }); writeFileSync(path.join(out, p, 'index.html'), pageHtml(page, lang)); list.push([page, lang]); };
-seo.core.forEach(p => emit(p, 'ka')); Object.keys(seo.landings).forEach(p => emit(p, 'ka')); seo.core.forEach(p => emit(p, 'en'));
+seo.core.forEach(p => emit(p, 'ka')); Object.keys(seo.landings).forEach(p => emit(p, 'ka')); [...seo.core, ...Object.keys(seo.landings).filter(seo.hasEn)].forEach(p => emit(p, 'en'));
 writeFileSync(path.join(out, '404.html'), pageHtml('notfound', 'ka'));
-const url = ([p, l]) => { const alt = seo.core.includes(p) ? [['ka', 'ka'], ['en', 'en'], ['x-default', 'ka']].map(([h, x]) => `<xhtml:link rel="alternate" hreflang="${h}" href="${seo.origin + seo.pathFor(p, x)}"/>`).join('') : ''; return `<url><loc>${seo.origin + seo.pathFor(p, l)}</loc>${alt}</url>`; };
+const url = ([p, l]) => { const alt = seo.hasEn(p) ? [['ka', 'ka'], ['en', 'en'], ['x-default', 'ka']].map(([h, x]) => `<xhtml:link rel="alternate" hreflang="${h}" href="${seo.origin + seo.pathFor(p, x)}"/>`).join('') : ''; return `<url><loc>${seo.origin + seo.pathFor(p, l)}</loc>${alt}</url>`; };
 writeFileSync(path.join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${list.map(url).join('\n')}\n</urlset>\n`);
 // IndexNow (Bing, Yandex): key file is published, payload is sent by the workflow after deploy.
 const key = readdirSync(src).find(f => /^[0-9a-f]{32}\.txt$/.test(f)).slice(0, 32);

@@ -75,13 +75,14 @@
       </nav>
     </header>`;
   }
+  function solutions() { return Object.keys(seo.landings).map(k=>[k,seo.view(k,state.lang)]).filter(([,l])=>l); }
   function footer() {
     return `<footer class="page-footer"><div class="frame">
-      <div class="footer-top ${state.lang==='en'?'':'has-solutions'}">
+      <div class="footer-top has-solutions">
         <div class="footer-intro">${logo()}<p>სპორტული სივრცეების მართვის პროგრამა</p></div>
         <div class="footer-column"><span class="footer-label">პლატფორმა</span><a data-page="features" href="${path('features')}">ფუნქციები</a><a data-page="how" href="${path('how')}">როგორ მუშაობს</a><a data-page="portals" href="${path('portals')}">კაბინეტები</a></div>
         <div class="footer-column"><span class="footer-label">დამატებით</span><a data-page="pricing" href="${path('pricing')}">ფასები</a><a data-page="faq" href="${path('faq')}">კითხვები</a><a data-page="contact" href="${path('contact')}">მოითხოვე დემო</a></div>
-        ${state.lang==='en'?'':`<div class="footer-column"><span class="footer-label">გადაწყვეტილებები</span>${Object.entries(seo.landings).map(([p,l])=>`<a data-page="${p}" href="${path(p)}">${l.nav}</a>`).join('')}</div>`}
+        <div class="footer-column"><span class="footer-label">გადაწყვეტილებები</span>${solutions().map(([p,l])=>`<a data-page="${p}" href="${path(p)}">${l.nav}</a>`).join('')}</div>
       </div>
       <div class="footer-bottom"><span>© Fit Manager · 2026</span><a href="mailto:info@fitmanager.ge">info@fitmanager.ge</a><a data-page="contact" href="${path('contact')}">მოითხოვე დემო</a></div>
     </div></footer>`;
@@ -156,8 +157,8 @@
   function home() {
     return `<section class="hero">
       <div class="frame hero-grid">
-        <div class="hero-text">${dotLabel(state.lang==='en'?'სპორტული სივრცეების მართვის პროგრამა':'სპორტდარბაზის მართვის პროგრამა')}<h1>სპორტული სივრცის <br><em>მართვა ერთ სისტემაში</em></h1>
-          <p>წევრები, აბონემენტები, შესვლები, ტრენერები და ფინანსები — ყველაფერი, რაც ყოველდღიურ მუშაობას სჭირდება, ერთ ადგილას.</p>
+        <div class="hero-text">${dotLabel('დარბაზის მართვა ერთ სისტემაში')}<h1>სპორტდარბაზის <br><em>მართვის პროგრამა</em></h1>
+          <p>დარბაზის მართვის პროგრამა, რომელიც წევრებს, აბონემენტებს, შესვლებს, ტრენერებსა და ფინანსებს ერთ ადგილას აერთიანებს.</p>
           <div class="hero-buttons">${button('contact','მოითხოვე დემო','lime')}${button('how','როგორ მუშაობს','outline')}</div>
           <div class="hero-assurance"><span class="tiny-dot"></span>14-დღიანი უფასო საცდელი პერიოდი</div>
         </div>
@@ -176,7 +177,7 @@
   }
   function pageIntro(label,title,desc,index) { return `<section class="inner-hero"><div class="frame inner-hero-grid"><div>${dotLabel(label)}<h1>${title}</h1></div><div class="inner-aside"><span class="page-index">${index}</span><p>${desc}</p></div></div></section>`; }
   const featureData=[
-    ['users','წევრების ბაზა','პროფილში თავმოყრილია საკონტაქტო ინფორმაცია, აბონემენტები და ვიზიტების ისტორია.','წევრები'],
+    ['users','წევრების ბაზა და დარბაზის CRM','პროფილში თავმოყრილია საკონტაქტო ინფორმაცია, აბონემენტები და ვიზიტების ისტორია.','წევრები'],
     ['ticket','აბონემენტები','შექმენით სხვადასხვა ტიპის აბონემენტი, მიუთითეთ ვადა და აკონტროლეთ წევრის სტატუსი.','აბონემენტები'],
     ['scan','შესვლა QR-ით ან ადმინისტრატორთან','შესასვლელთან განთავსებულ QR კოდს წევრი თავისი კაბინეტიდან სკანირებს. ვიზიტის დაფიქსირება ადმინისტრატორსაც შეუძლია.','შესვლის კონტროლი'],
     ['wallet','გადახდები და სალარო','აღრიცხეთ აბონემენტების გადახდები, პროდუქტის გაყიდვები და სალაროს ოპერაციები.','ფინანსები'],
@@ -185,7 +186,7 @@
     ['settings','თანამშრომლების წვდომა','გამოყავით თანამშრომლების როლები და მათი სამუშაო უფლებები.','როლები'],
     ['calendar','წევრისა და ტრენერის კაბინეტები','ვარჯიშისა და კვების გეგმები, პროგრესის კონტროლი, უკუკავშირი და პირადი მიმოწერა.','კაბინეტები']
   ];
-  function features() { return `${pageIntro('პროგრამის შესაძლებლობები','ყველა ძირითადი ფუნქცია<br>ერთ სამუშაო გარემოში','წევრების, ვიზიტების, გადახდებისა და მწვრთნელობისთვის საჭირო ინსტრუმენტები ერთად.','01 / პროდუქტი')}
+  function features() { return `${pageIntro('პროგრამის შესაძლებლობები','ფიტნეს კლუბის<br>მართვის სისტემა','ფიტნეს CRM წევრებისთვის, ვიზიტების, გადახდებისა და მწვრთნელობის ინსტრუმენტები ერთად.','01 / პროდუქტი')}
     <section class="features-section"><div class="frame features-layout"><div class="features-anchor"><span class="small-caps">FIT MANAGER / MODULES</span><h2>ყველაფერი იწყება<br>წევრის პროფილით</h2><p>ერთმანეთთან დაკავშირებული მონაცემები აადვილებს ანგარიშგებას და ყოველდღიურ ადმინისტრირებას.</p><div class="features-graphic"><div class="orbital-center">fm</div><span>წევრი</span><span>აბონემენტი</span><span>ვიზიტი</span><span>გადახდა</span></div></div>
       <div class="features-rows">${featureData.map(([i,t,d,tag],n)=>`<article class="feature-row reveal"><div class="row-index">${String(n+1).padStart(2,'0')}</div><div class="row-icon">${symbol(i)}</div><div><span class="row-tag">${tag}</span><h3>${t}</h3><p>${d}</p></div></article>`).join('')}</div>
     </div></section>${audienceSection()}${bottomCta()}`; }
@@ -295,13 +296,13 @@
       </div><input type="checkbox" name="botcheck" hidden tabindex="-1" autocomplete="off" aria-hidden="true"><button type="submit" class="action form-submit"><span>მოითხოვე დემო</span></button><p class="form-send-note" role="status" aria-live="polite"></p></form>
     </div></section>`; }
   function landing(key) {
-    const l=seo.landings[key];
-    const others=Object.entries(seo.landings).filter(([k])=>k!==key);
+    const l=seo.view(key,state.lang);
+    const others=solutions().filter(([k])=>k!==key);
     return `${pageIntro(l.nav,l.h1,l.lead,'Fit Manager')}
     <section class="features-section solution"><div class="frame"><div class="solution-head"><h2>${l.heading}</h2><p>${l.intro}</p></div><div class="solution-grid">${l.rows.map(([i,t,d])=>`<article class="solution-card"><div class="row-icon">${symbol(i)}</div><h3>${t}</h3><p>${d}</p></article>`).join('')}</div></div></section>
     <section class="how-detail solution-detail"><div class="frame how-grid"><div><h2>${l.detail[0]}</h2></div><p>${l.detail[1]}<br><a data-page="${l.detail[2]}" href="${path(l.detail[2])}">${l.detail[3]}</a></p></div></section>
-    <section class="faq-section"><div class="frame faq-layout"><div class="faq-note">${dotLabel('ხშირი კითხვები')}<h2>${l.nav}: კითხვები და პასუხები</h2>${button('contact','მოითხოვე დემო','dark')}</div>${faqList(l.faq)}</div></section>
-    <nav class="solution-links" aria-label="გადაწყვეტილებები"><div class="frame"><h2>სხვა გადაწყვეტილებები</h2><div>${others.map(([k,o])=>`<a data-page="${k}" href="${path(k)}">${o.nav}</a>`).join('')}</div></div></nav>${bottomCta()}`;
+    <section class="faq-section"><div class="frame faq-layout"><div class="faq-note">${dotLabel('ხშირი კითხვები')}<h2>${state.lang==='en'?'Questions and answers':'კითხვები და პასუხები'}</h2>${button('contact','მოითხოვე დემო','dark')}</div>${faqList(l.faq)}</div></section>
+    ${others.length?`<nav class="solution-links" aria-label="გადაწყვეტილებები"><div class="frame"><h2>სხვა გადაწყვეტილებები</h2><div>${others.map(([k,o])=>`<a data-page="${k}" href="${path(k)}">${o.nav}</a>`).join('')}</div></div></nav>`:''}${bottomCta()}`;
   }
   function notfound() { return `${pageIntro('404','გვერდი ვერ<br>მოიძებნა','ეს გვერდი აღარ არსებობს ან მისამართი შეცვლილია.','404')}<section class="features-section"><div class="frame">${button('home','მთავარი','dark')}</div></section>`; }
   const pages={notfound,home,features,how,portals,pricing,faq,contact};
@@ -385,7 +386,7 @@
     const a=e.target.closest('a[data-page]');if(a){if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();go(a.dataset.page);return;}
     const lang=e.target.closest('[data-lang]');if(lang){
       const next=lang.dataset.lang;if(next!== 'en' && next!== 'ka' || next===state.lang)return;
-      if(!seo.core.includes(state.page))state.page='home';
+      if(!seo.hasEn(state.page))state.page='home';
       state.lang=next;
       history.pushState({page:state.page,lang:next},'',path(state.page));
       render();return;
