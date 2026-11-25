@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Georgian:wght@400;500;600;700;800&display=swap');
+
 :root{--ink:#13271e;--forest:#0e241b;--forest-2:#183528;--lime:#d4f36b;--paper:#f5f7f3;--white:#fff;--muted:#68756b;--line:#dce2da;--container:1352px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}

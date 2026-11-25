@@ -2,7 +2,7 @@
 
 🌐 **https://fitmanager.ge**
 
-სტატიკური საიტი: build პროცესი და npm პაკეტები არ სჭირდება.
+სტატიკური საიტი: npm პაკეტები არ სჭირდება. `scripts/build.mjs` ქმნის `_site/`-ს (SEO-სთვის მზა HTML).
 
 | ფაილი | დანიშნულება |
 | --- | --- |
@@ -11,18 +11,20 @@
 | `dist/site-i18n.js` | ინგლისური ვერსია |
 | `dist/site-v3.css`, `site-v5.css`, `site-v6.css`, `site-v7.css` (მობილური) | დიზაინი |
 | `dist/site-v5.js` | 3D ეფექტები და ანიმაციები |
+| `dist/site-seo.js` | სათაურები, აღწერები და საკვანძო სიტყვების გვერდები |
 | `dist/assets/`, `dist/vendor/` | სურათები; GSAP, ScrollTrigger, Lenis |
-| `dist/CNAME`, `robots.txt`, `sitemap.xml`, `site.webmanifest` | დომენი, SEO, PWA |
+| `dist/CNAME`, `robots.txt`, `site.webmanifest` | დომენი, SEO, PWA |
 
 ## ლოკალურად
 
 ```bash
-python3 -m http.server 8080 -d dist
+node scripts/build.mjs
+python3 -m http.server 8080 -d _site
 ```
 
 ## დეპლოი
 
-`main`-ზე push ავტომატურად აქვეყნებს `dist/`-ს GitHub Pages-ზე.
+`main`-ზე push ავტომატურად აგებს და აქვეყნებს `_site/`-ს GitHub Pages-ზე.
 
 ## დემოს ფორმა → ელფოსტა
 

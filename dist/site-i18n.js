@@ -15,6 +15,8 @@
     'კაბინეტები': 'Portals',
     'ფასები': 'Pricing',
     'კითხვები': 'FAQ',
+    'გვერდი ვერ': 'Page',
+    'მოიძებნა': 'not found',
     'მოითხოვე დემო': 'Request a Demo',
     'სპორტული სივრცეების მართვის პროგრამა': 'Management software for fitness and sports businesses',
     'პლატფორმა': 'Platform',

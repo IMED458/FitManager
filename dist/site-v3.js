@@ -9,17 +9,20 @@
     ['home', 'მთავარი'], ['features', 'ფუნქციები'], ['how', 'როგორ მუშაობს'], ['portals', 'კაბინეტები'],
     ['pricing', 'ფასები'], ['faq', 'კითხვები']
   ];
-  const allRoutes = new Set(['home', 'features', 'how', 'portals', 'pricing', 'faq', 'contact']);
-  function readLang() {
-    const requested = new URLSearchParams(location.search).get('lang');
-    if (requested === 'en' || requested === 'ka') return requested;
-    try { return localStorage.getItem('fitmanager-language') === 'en' ? 'en' : 'ka'; }
-    catch { return 'ka'; }
+  const seo = window.FitManagerSeo;
+  const allRoutes = new Set([...seo.core, ...Object.keys(seo.landings)]);
+  // Old ?page= / ?lang= links keep working: send them to the clean address.
+  const legacy = new URLSearchParams(location.search);
+  if (legacy.has('page') || legacy.has('lang')) {
+    const wanted = legacy.get('page') === 'app' ? 'contact' : (legacy.get('page') || seo.parse(location.pathname).page);
+    const lang = legacy.get('lang') === 'en' ? 'en' : seo.parse(location.pathname).lang;
+    ['page', 'lang'].forEach(k => legacy.delete(k));
+    const rest = legacy.toString();
+    location.replace(seo.pathFor(seo.core.includes(wanted) ? wanted : 'home', lang) + (rest ? `?${rest}` : '') + location.hash);
+    return;
   }
-  const state = { page: readPage(), menu: false, portal: 'member', lang: readLang() };
-  const path = p => p === 'home' ? (state.lang === 'en' ? '/?lang=en' : '/') : `/?page=${p}${state.lang === 'en' ? '&lang=en' : ''}`;
-  function readPage() { const p = new URLSearchParams(location.search).get('page') || 'home'; return p === 'app' ? 'contact' : (allRoutes.has(p) ? p : 'home'); }
-  if (new URLSearchParams(location.search).get('page') === 'app') history.replaceState({page:'contact'}, '', path('contact'));
+  const state = { ...seo.parse(location.pathname), menu: false, portal: 'member' };
+  const path = p => seo.pathFor(p, state.lang);
   function safe(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function symbol(name) {
     const shapes = {
@@ -47,7 +50,7 @@
   }
   function logo() {
     return `<a class="brand" data-page="home" href="${path('home')}" aria-label="Fit Manager — მთავარი">
-      <img class="brand-logo" src="/assets/fitmanager-brand.png" alt="Fit Manager" width="190" height="64" />
+      <img class="brand-logo" src="/assets/fitmanager-brand.webp" alt="Fit Manager" width="576" height="192" />
     </a>`;
   }
   function button(p, t, kind = 'dark') { return `<a class="action action-${kind}" href="${path(p)}" data-page="${p}"><span>${t}</span><span class="action-end" aria-hidden="true"></span></a>`; }
@@ -74,10 +77,11 @@
   }
   function footer() {
     return `<footer class="page-footer"><div class="frame">
-      <div class="footer-top">
+      <div class="footer-top ${state.lang==='en'?'':'has-solutions'}">
         <div class="footer-intro">${logo()}<p>სპორტული სივრცეების მართვის პროგრამა</p></div>
         <div class="footer-column"><span class="footer-label">პლატფორმა</span><a data-page="features" href="${path('features')}">ფუნქციები</a><a data-page="how" href="${path('how')}">როგორ მუშაობს</a><a data-page="portals" href="${path('portals')}">კაბინეტები</a></div>
         <div class="footer-column"><span class="footer-label">დამატებით</span><a data-page="pricing" href="${path('pricing')}">ფასები</a><a data-page="faq" href="${path('faq')}">კითხვები</a><a data-page="contact" href="${path('contact')}">მოითხოვე დემო</a></div>
+        ${state.lang==='en'?'':`<div class="footer-column"><span class="footer-label">გადაწყვეტილებები</span>${Object.entries(seo.landings).map(([p,l])=>`<a data-page="${p}" href="${path(p)}">${l.nav}</a>`).join('')}</div>`}
       </div>
       <div class="footer-bottom"><span>© Fit Manager · 2026</span><a href="mailto:info@fitmanager.ge">info@fitmanager.ge</a><a data-page="contact" href="${path('contact')}">მოითხოვე დემო</a></div>
     </div></footer>`;
@@ -152,7 +156,7 @@
   function home() {
     return `<section class="hero">
       <div class="frame hero-grid">
-        <div class="hero-text">${dotLabel('სპორტული სივრცეების მართვის პროგრამა')}<h1>სპორტული სივრცის <br><em>მართვა ერთ სისტემაში</em></h1>
+        <div class="hero-text">${dotLabel(state.lang==='en'?'სპორტული სივრცეების მართვის პროგრამა':'სპორტდარბაზის მართვის პროგრამა')}<h1>სპორტული სივრცის <br><em>მართვა ერთ სისტემაში</em></h1>
           <p>წევრები, აბონემენტები, შესვლები, ტრენერები და ფინანსები — ყველაფერი, რაც ყოველდღიურ მუშაობას სჭირდება, ერთ ადგილას.</p>
           <div class="hero-buttons">${button('contact','მოითხოვე დემო','lime')}${button('how','როგორ მუშაობს','outline')}</div>
           <div class="hero-assurance"><span class="tiny-dot"></span>14-დღიანი უფასო საცდელი პერიოდი</div>
@@ -276,8 +280,9 @@
     ['შეიძლება პროგრამის მობილურიდან გამოყენება?','დიახ. Fit Manager-ის კაბინეტები მორგებულია ტელეფონისა და პლანშეტის ეკრანებზე.'],
     ['როგორ მოვითხოვო დემო?','შეავსე მოთხოვნის ფორმა ან მოგვწერე info@fitmanager.ge-ზე. დემოს ბმულს ელფოსტით გამოგიგზავნით.']
   ];
+  function faqList(items) { return `<div class="faq-list">${items.map(([q,a],i)=>`<article class="faq-item ${i===0?'open':''}"><button type="button" class="faq-q" data-faq aria-expanded="${i===0}"><span>${String(i+1).padStart(2,'0')}</span><b>${q}</b>${symbol('chevron')}</button><div class="faq-a"><p>${a}</p></div></article>`).join('')}</div>`; }
   function faq() {return `${pageIntro('ხშირად დასმული კითხვები','რაც უნდა იცოდეთ<br>პროგრამის შერჩევამდე','პასუხები ძირითად კითხვებზე — ფუნქციების, წვდომის, პაკეტებისა და საცდელი პერიოდის შესახებ.','05 / კითხვები')}
-    <section class="faq-section"><div class="frame faq-layout"><div class="faq-note">${dotLabel('კიდევ გაქვს კითხვა?')}<h2>მოგვწერე და დაგეხმარებით</h2><p>გაინტერესებს კონკრეტული ფუნქცია ან პაკეტი? მოგვწერე შენს საჭიროებებზე და ყველაფერს აგიხსნით.</p>${button('contact','მოითხოვე დემო','dark')}</div><div class="faq-list">${faqs.map(([q,a],i)=>`<article class="faq-item ${i===0?'open':''}"><button type="button" class="faq-q" data-faq aria-expanded="${i===0}"><span>${String(i+1).padStart(2,'0')}</span><b>${q}</b>${symbol('chevron')}</button><div class="faq-a"><p>${a}</p></div></article>`).join('')}</div></div></section>`; }
+    <section class="faq-section"><div class="frame faq-layout"><div class="faq-note">${dotLabel('კიდევ გაქვს კითხვა?')}<h2>მოგვწერე და დაგეხმარებით</h2><p>გაინტერესებს კონკრეტული ფუნქცია ან პაკეტი? მოგვწერე შენს საჭიროებებზე და ყველაფერს აგიხსნით.</p>${button('contact','მოითხოვე დემო','dark')}</div>${faqList(faqs)}</div></section>`; }
   function contact() { return `${pageIntro('მოითხოვე დემო','ნახე Fit Manager<br>შენი ბიზნესისთვის','მოგვწერე რას მართავ და რომელი ფუნქციები გაინტერესებს. დემოს ბმულს შენს ელფოსტაზე გამოგიგზავნით.','06 / დემო')}
     <section class="request-section"><div class="frame request-layout"><div class="request-info"><div>${dotLabel('დაგვიკავშირდი')}<h2>მოგვწერე შენი სივრცის შესახებ</h2><p class="request-intro">დემო დაგეხმარება ნახო, როგორ მართავ წევრებს, შესვლებს, გადახდებსა და ტრენერების სამუშაოს ერთ სისტემაში.</p></div><div class="request-points"><div><span>01</span><b>შეავსე მოკლე ფორმა</b></div><div><span>02</span><b>${LEAD_ACCESS_KEY?'გამოგვიგზავნე მოთხოვნა':'მოთხოვნა გამოგვიგზავნე ელფოსტით'}</b></div><div><span>03</span><b>დემოს ბმულს გამოგიგზავნით</b></div></div><div class="request-email"><span>ელფოსტა</span><a href="mailto:info@fitmanager.ge?subject=Fit%20Manager%20%E2%80%94%20%E1%83%93%E1%83%94%E1%83%9B%E1%83%9D%E1%83%A1%20%E1%83%9B%E1%83%9D%E1%83%97%E1%83%AE%E1%83%9D%E1%83%95%E1%83%9C%E1%83%90">info@fitmanager.ge</a></div></div>
       <form class="request-form demo-request-form" data-demo-form><div class="form-heading"><span>დემოს მოთხოვნა</span><span>FIT MANAGER</span></div><div class="form-fields">
@@ -289,8 +294,19 @@
         <label for="demo-message" class="form-full">რა გაინტერესებს? <span class="field-optional">(არასავალდებულო)</span><textarea id="demo-message" name="message" rows="4" maxlength="2000" placeholder="მოგვწერე, რაში გჭირდება Fit Manager"></textarea></label>
       </div><input type="checkbox" name="botcheck" hidden tabindex="-1" autocomplete="off" aria-hidden="true"><button type="submit" class="action form-submit"><span>მოითხოვე დემო</span></button><p class="form-send-note" role="status" aria-live="polite"></p></form>
     </div></section>`; }
-  const pages={home,features,how,portals,pricing,faq,contact};
-  const titles={home:'მთავარი',features:'ფუნქციები',how:'როგორ მუშაობს',portals:'კაბინეტები',pricing:'ფასები',faq:'კითხვები',contact:'მოითხოვე დემო'};
+  function landing(key) {
+    const l=seo.landings[key];
+    const others=Object.entries(seo.landings).filter(([k])=>k!==key);
+    return `${pageIntro(l.nav,l.h1,l.lead,'Fit Manager')}
+    <section class="features-section solution"><div class="frame"><div class="solution-head"><h2>${l.heading}</h2><p>${l.intro}</p></div><div class="solution-grid">${l.rows.map(([i,t,d])=>`<article class="solution-card"><div class="row-icon">${symbol(i)}</div><h3>${t}</h3><p>${d}</p></article>`).join('')}</div></div></section>
+    <section class="how-detail solution-detail"><div class="frame how-grid"><div><h2>${l.detail[0]}</h2></div><p>${l.detail[1]}<br><a data-page="${l.detail[2]}" href="${path(l.detail[2])}">${l.detail[3]}</a></p></div></section>
+    <section class="faq-section"><div class="frame faq-layout"><div class="faq-note">${dotLabel('ხშირი კითხვები')}<h2>${l.nav}: კითხვები და პასუხები</h2>${button('contact','მოითხოვე დემო','dark')}</div>${faqList(l.faq)}</div></section>
+    <nav class="solution-links" aria-label="გადაწყვეტილებები"><div class="frame"><h2>სხვა გადაწყვეტილებები</h2><div>${others.map(([k,o])=>`<a data-page="${k}" href="${path(k)}">${o.nav}</a>`).join('')}</div></div></nav>${bottomCta()}`;
+  }
+  function notfound() { return `${pageIntro('404','გვერდი ვერ<br>მოიძებნა','ეს გვერდი აღარ არსებობს ან მისამართი შეცვლილია.','404')}<section class="features-section"><div class="frame">${button('home','მთავარი','dark')}</div></section>`; }
+  const pages={notfound,home,features,how,portals,pricing,faq,contact};
+  
+  Object.keys(seo.landings).forEach(k=>{pages[k]=()=>landing(k);});
   let pageObserver=null, journeyObserver=null;
   function activateScene(index) {
     document.querySelectorAll('[data-scene]').forEach(el=>el.classList.toggle('active',Number(el.dataset.scene)===index));
@@ -334,29 +350,44 @@
       document.querySelectorAll('[data-journey-step]').forEach(el=>journeyObserver.observe(el));
     } else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('shown'));
   }
+  function markup(page,lang) {
+    const saved={...state};Object.assign(state,{page,lang,menu:false,portal:'member'});
+    const html=`${header()}<main id="main">${pages[page]()}</main>${footer()}`;
+    Object.assign(state,saved);return html;
+  }
+  // Used by scripts/build.mjs to write crawlable HTML for every address.
+  window.FitManagerRender={markup,faqs,plans};
+  function setHead() {
+    const info=seo.head(state.page,state.lang);
+    document.documentElement.lang=state.lang;document.title=info.title;
+    const put=(selector,value)=>document.querySelector(selector)?.setAttribute('content',value);
+    put('meta[name="description"]',info.description);
+    put('meta[property="og:title"]',info.title);put('meta[property="og:description"]',info.description);
+    put('meta[property="og:url"]',info.canonical);put('meta[property="og:locale"]',state.lang==='en'?'en_US':'ka_GE');
+    document.querySelectorAll('link[rel="canonical"],link[rel="alternate"][hreflang]').forEach(el=>el.remove());
+    const add=(rel,href,hreflang)=>{const el=document.createElement('link');el.rel=rel;el.href=href;if(hreflang)el.hreflang=hreflang;document.head.append(el);};
+    if(info.canonical)add('canonical',info.canonical);
+    if(info.alternates){const ka=seo.origin+seo.pathFor(state.page,'ka');add('alternate',ka,'ka');add('alternate',seo.origin+seo.pathFor(state.page,'en'),'en');add('alternate',ka,'x-default');}
+  }
+  let first=true;
   function render() {
     const english = state.lang === 'en';
-    document.documentElement.lang = state.lang;
-    const pageName = english ? (window.FitManagerI18n?.en[titles[state.page]] || titles[state.page]) : titles[state.page];
-    document.title = english ? `${pageName} | Fit Manager — Fitness Business Management` : `${pageName} | Fit Manager — სპორტული სივრცეების მართვის პროგრამა`;
-    const description = english
-      ? 'Fit Manager helps gyms, studios and sports clubs manage memberships, check-ins, trainers, nutrition plans, payments and reporting in one place.'
-      : 'Fit Manager — სპორტდარბაზების, სტუდიებისა და სპორტული კლუბების მართვის სისტემა. წევრები, აბონემენტები, შესვლები, ტრენერები, კვება და ფინანსები ერთ სივრცეში.';
-    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
-    document.querySelector('meta[property="og:title"]')?.setAttribute('content', english ? 'Fit Manager — Fitness Business Management' : 'Fit Manager — სპორტული სივრცეების მართვის პროგრამა');
-    document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    const ready=first&&root.dataset.ssr===`${state.page}:${state.lang}`;
+    first=false;
+    if(ready){mountPage();requestAnimationFrame(moveProduct);return;}
+    setHead();
     root.innerHTML=`${header()}<main id="main">${pages[state.page]()}</main>${footer()}`;
     if(english) window.FitManagerI18n?.translate(root);
     mountPage();requestAnimationFrame(moveProduct);
   }
   function go(p) { if(!allRoutes.has(p))return;state.page=p;state.menu=false;history.pushState({page:p},'',path(p));render();window.scrollTo({top:0,behavior:'instant'}); }
   root.addEventListener('click',e=>{
-    const a=e.target.closest('[data-page]');if(a){e.preventDefault();go(a.dataset.page);return;}
+    const a=e.target.closest('a[data-page]');if(a){if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();go(a.dataset.page);return;}
     const lang=e.target.closest('[data-lang]');if(lang){
       const next=lang.dataset.lang;if(next!== 'en' && next!== 'ka' || next===state.lang)return;
+      if(!seo.core.includes(state.page))state.page='home';
       state.lang=next;
-      try{localStorage.setItem('fitmanager-language',next);}catch{}
-      history.replaceState({page:state.page,lang:next},'',path(state.page));
+      history.pushState({page:state.page,lang:next},'',path(state.page));
       render();return;
     }
     const menu=e.target.closest('[data-menu]');if(menu){setMenu(!state.menu);return;}
@@ -429,7 +460,7 @@
     if(status)status.textContent=english ? 'Press Send in your email app. If it doesn’t open, email us directly at info@fitmanager.ge.' : 'ელფოსტის აპში დააჭირე „გაგზავნას“. თუ აპი არ გაიხსნა, მოგვწერე პირდაპირ info@fitmanager.ge-ზე.';
     window.location.href=`mailto:info@fitmanager.ge?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
-  window.addEventListener('popstate',()=>{state.page=readPage();state.lang=readLang();state.menu=false;render();});
+  window.addEventListener('popstate',()=>{Object.assign(state,seo.parse(location.pathname),{menu:false});render();});
   let ticking=false;
   function moveProduct(){ticking=false;if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const art=document.querySelector('.art-sheet');if(art){const rect=document.querySelector('.hero').getBoundingClientRect();const t=Math.max(0,Math.min(1,-rect.top/Math.max(1,rect.height)));art.style.setProperty('--scroll-shift',`${t*22}px`);}const scan=document.querySelector('.scanner-3d');if(scan){const rect=document.querySelector('.journey-section').getBoundingClientRect();const t=Math.max(0,Math.min(1,(innerHeight-rect.top)/(innerHeight+rect.height)));scan.style.setProperty('--scan-rot',`${-13+25*t}deg`);}}
   window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(moveProduct);}},{passive:true});
