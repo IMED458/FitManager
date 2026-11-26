@@ -76,10 +76,18 @@
     </header>`;
   }
   function solutions() { return Object.keys(seo.landings).map(k=>[k,seo.view(k,state.lang)]).filter(([,l])=>l); }
+  const SOCIAL=[
+    ['Facebook','https://www.facebook.com/share/1A1F89js7A/','<path fill="currentColor" d="M13.6 21v-7.4h2.5l.4-3h-2.9V8.8c0-.9.3-1.4 1.5-1.4h1.5V4.7c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.2H8.2v3h2.5V21h2.9z"/>'],
+    ['Instagram','https://www.instagram.com/fitmaneger.ge/','<rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/>'],
+    ['TikTok','https://www.tiktok.com/@fit.manager','<path fill="currentColor" d="M16.4 3c.4 2.3 1.8 3.8 4.1 4v3.2c-1.5.1-2.9-.4-4.1-1.2v6.3c0 3.5-2.6 5.7-5.8 5.7-3.2 0-5.6-2.4-5.6-5.6 0-3.5 3-6.1 6.6-5.6v3.3c-1.7-.4-3.3.6-3.3 2.3 0 1.4 1 2.4 2.4 2.4 1.5 0 2.4-1 2.4-2.6V3h3.3z"/>']
+  ];
+  function social() {
+    return `<div class="footer-social">${SOCIAL.map(([n,u,svg])=>`<a href="${u}" target="_blank" rel="noopener me" aria-label="${n}" title="${n}"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">${svg}</svg></a>`).join('')}</div>`;
+  }
   function footer() {
     return `<footer class="page-footer"><div class="frame">
       <div class="footer-top has-solutions">
-        <div class="footer-intro">${logo()}<p>სპორტული სივრცეების მართვის პროგრამა</p></div>
+        <div class="footer-intro">${logo()}<p>სპორტული სივრცეების მართვის პროგრამა</p>${social()}</div>
         <div class="footer-column"><span class="footer-label">პლატფორმა</span><a data-page="features" href="${path('features')}">ფუნქციები</a><a data-page="how" href="${path('how')}">როგორ მუშაობს</a><a data-page="portals" href="${path('portals')}">კაბინეტები</a></div>
         <div class="footer-column"><span class="footer-label">დამატებით</span><a data-page="pricing" href="${path('pricing')}">ფასები</a><a data-page="faq" href="${path('faq')}">კითხვები</a><a data-page="contact" href="${path('contact')}">მოითხოვე დემო</a></div>
         <div class="footer-column"><span class="footer-label">გადაწყვეტილებები</span>${solutions().map(([p,l])=>`<a data-page="${p}" href="${path(p)}">${l.nav}</a>`).join('')}</div>
